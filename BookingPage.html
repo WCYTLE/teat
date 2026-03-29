@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>จองบัตรคอนเสิร์ต</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #D4AF37;
+  --gold-light: #F4CF57;
+  --dark: #0a0a0f;
+  --dark2: #111118;
+  --dark3: #1a1a28;
+  --purple: #6C3FC5;
+  --pink: #E040A0;
+  --text: #f0f0f8;
+  --text-dim: #9090b0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans Thai', sans-serif;
+  background: var(--dark);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+.bg-stars {
+  position: fixed; inset: 0; z-index: 0;
+  background: radial-gradient(ellipse at 20% 50%, rgba(108,63,197,0.15) 0%, transparent 50%),
+              radial-gradient(ellipse at 80% 20%, rgba(224,64,160,0.1) 0%, transparent 40%),
+              var(--dark);
+}
+.container { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; padding: 20px; }
+
+.hero {
+  text-align: center; padding: 60px 20px 40px;
+  border-bottom: 1px solid rgba(212,175,55,0.2);
+  margin-bottom: 40px;
+}
+.hero-label {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--purple), var(--pink));
+  color: white; font-size: 11px; font-weight: 600;
+  letter-spacing: 3px; text-transform: uppercase;
+  padding: 6px 20px; border-radius: 20px; margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 8vw, 3.5rem);
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1.1; margin-bottom: 16px;
+}
+.hero-date { color: var(--text-dim); font-size: 14px; letter-spacing: 1px; }
+.hero-venue { color: var(--gold); font-size: 15px; font-weight: 500; margin-top: 6px; }
+
+.steps { display: flex; gap: 8px; margin-bottom: 32px; }
+.step {
+  flex: 1; text-align: center; padding: 10px 6px;
+  border-radius: 10px; background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.06);
+  font-size: 12px; color: var(--text-dim); transition: all 0.3s;
+}
+.step.active { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border-color: transparent; }
+.step.done { background: rgba(212,175,55,0.15); color: var(--gold); border-color: rgba(212,175,55,0.3); }
+.step-num { font-size: 18px; font-weight: 700; display: block; margin-bottom: 2px; }
+
+.section { display: none; animation: fadeIn 0.4s ease; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+.table-grid { display: grid; gap: 14px; }
+.table-card {
+  background: var(--dark3);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 16px; padding: 20px 22px;
+  cursor: pointer; transition: all 0.25s;
+  display: flex; align-items: center; gap: 16px;
+}
+.table-card:hover { border-color: rgba(212,175,55,0.4); transform: translateY(-2px); }
+.table-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.08); }
+.table-card.unavailable { opacity: 0.4; pointer-events: none; }
+.table-badge {
+  width: 52px; height: 52px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.table-info { flex: 1; }
+.table-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
+.table-desc { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+.table-meta { display: flex; gap: 14px; font-size: 13px; }
+.table-price { color: var(--gold); font-weight: 700; }
+.table-seats { color: var(--text-dim); }
+.table-seats span { color: #4CAF50; font-weight: 600; }
+.check-icon { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+.table-card.selected .check-icon { background: var(--gold); border-color: var(--gold); }
+.check-icon::after { content: '✓'; font-size: 12px; color: white; display: none; }
+.table-card.selected .check-icon::after { display: block; }
+
+.form-group { margin-bottom: 20px; }
+.form-label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 0.5px; }
+.form-label span { color: #E040A0; }
+.form-input {
+  width: 100%; padding: 14px 16px;
+  background: var(--dark3); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px; color: var(--text);
+  font-family: 'Noto Sans Thai', sans-serif; font-size: 15px;
+  transition: border-color 0.2s; outline: none;
+}
+.form-input:focus { border-color: var(--purple); }
+.form-input::placeholder { color: var(--text-dim); }
+
+.seat-selector { display: flex; align-items: center; gap: 14px; }
+.seat-btn {
+  width: 42px; height: 42px; border-radius: 10px;
+  background: var(--dark3); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text); font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+}
+.seat-btn:hover { border-color: var(--gold); color: var(--gold); }
+.seat-count { font-size: 24px; font-weight: 700; min-width: 40px; text-align: center; color: var(--gold); }
+
+.summary-box {
+  background: linear-gradient(135deg, rgba(108,63,197,0.15), rgba(224,64,160,0.1));
+  border: 1px solid rgba(212,175,55,0.25);
+  border-radius: 14px; padding: 20px 22px; margin: 20px 0;
+}
+.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.summary-row:last-child { border-bottom: none; padding-top: 14px; }
+.summary-label { color: var(--text-dim); font-size: 14px; }
+.summary-value { font-weight: 600; }
+.summary-total { font-size: 22px; color: var(--gold); }
+
+.bank-box {
+  background: var(--dark3); border: 1px dashed rgba(212,175,55,0.4);
+  border-radius: 14px; padding: 20px; text-align: center; margin: 20px 0;
+}
+.bank-box h3 { color: var(--gold); margin-bottom: 10px; font-size: 15px; }
+.bank-account { font-size: 18px; font-weight: 700; letter-spacing: 1px; margin: 8px 0; }
+.bank-amount { font-size: 26px; font-weight: 900; color: var(--pink); margin: 10px 0; }
+
+.upload-area {
+  border: 2px dashed rgba(255,255,255,0.15); border-radius: 14px;
+  padding: 40px 20px; text-align: center; cursor: pointer;
+  transition: all 0.3s; margin: 16px 0;
+}
+.upload-area:hover { border-color: var(--gold); background: rgba(212,175,55,0.05); }
+.upload-area.has-file { border-color: #4CAF50; background: rgba(76,175,80,0.05); }
+.upload-icon { font-size: 36px; margin-bottom: 10px; }
+.upload-text { color: var(--text-dim); font-size: 14px; }
+.preview-img { max-width: 100%; max-height: 250px; border-radius: 10px; margin-top: 10px; }
+
+.btn {
+  width: 100%; padding: 16px; border-radius: 12px;
+  font-family: 'Noto Sans Thai', sans-serif; font-size: 16px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.25s;
+  letter-spacing: 0.5px;
+}
+.btn-primary { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,63,197,0.4); }
+.btn-primary:disabled { opacity: 0.5; pointer-events: none; }
+.btn-gold { background: linear-gradient(135deg, #B8961A, var(--gold)); color: var(--dark); }
+.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.4); }
+.btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); margin-bottom: 12px; }
+.btn-outline:hover { border-color: var(--text-dim); }
+
+.alert { padding: 14px 16px; border-radius: 10px; margin: 14px 0; font-size: 14px; }
+.alert-success { background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.3); color: #81C784; }
+.alert-error { background: rgba(244,67,54,0.15); border: 1px solid rgba(244,67,54,0.3); color: #EF9A9A; }
+.alert-info { background: rgba(33,150,243,0.15); border: 1px solid rgba(33,150,243,0.3); color: #90CAF9; }
+
+.success-screen { text-align: center; padding: 40px 0; }
+.success-icon { font-size: 72px; margin-bottom: 20px; animation: bounce 0.5s; }
+@keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
+.booking-id-box {
+  background: var(--dark3); border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 14px; padding: 20px; margin: 20px 0;
+  font-size: 24px; font-weight: 900; color: var(--gold); letter-spacing: 2px;
+}
+.section-title { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px; }
+
+.loading { text-align: center; padding: 40px; color: var(--text-dim); }
+.spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div class="bg-stars"></div>
+<div class="container">
+  <div class="hero">
+    <div class="hero-label">🎵 LIVE CONCERT</div>
+    <h1 id="concertName">CONCERT 2025</h1>
+    <div class="hero-date" id="concertDate"></div>
+    <div class="hero-venue" id="concertVenue"></div>
+  </div>
+
+  <div class="steps">
+    <div class="step active" id="step1"><span class="step-num">1</span>เลือกระดับ</div>
+    <div class="step" id="step2"><span class="step-num">2</span>กรอกข้อมูล</div>
+    <div class="step" id="step3"><span class="step-num">3</span>ชำระเงิน</div>
+    <div class="step" id="step4"><span class="step-num">4</span>สำเร็จ</div>
+  </div>
+
+  <!-- Section 1 -->
+  <div class="section active" id="sec1">
+    <div class="section-title">เลือกระดับบัตร</div>
+    <div class="loading" id="loadingTables"><div class="spinner"></div>กำลังโหลด...</div>
+    <div class="table-grid" id="tableGrid"></div>
+    <br>
+    <div id="seatRow" style="display:none;">
+      <div class="form-group">
+        <label class="form-label">จำนวนที่นั่ง</label>
+        <div class="seat-selector">
+          <button class="seat-btn" onclick="changeSeat(-1)">−</button>
+          <div class="seat-count" id="seatCount">1</div>
+          <button class="seat-btn" onclick="changeSeat(1)">+</button>
+          <span id="maxSeats" style="color:var(--text-dim);font-size:13px;"></span>
+        </div>
+      </div>
+      <div class="summary-box">
+        <div class="summary-row"><span class="summary-label">ระดับ</span><span class="summary-value" id="sumTable">-</span></div>
+        <div class="summary-row"><span class="summary-label">ราคาต่อที่นั่ง</span><span class="summary-value" id="sumPrice">-</span></div>
+        <div class="summary-row"><span class="summary-label">จำนวน</span><span class="summary-value" id="sumSeats">-</span></div>
+        <div class="summary-row"><span class="summary-label">ราคารวม</span><span class="summary-total" id="sumTotal">-</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="goStep(2)">ถัดไป →</button>
+    </div>
+  </div>
+
+  <!-- Section 2 -->
+  <div class="section" id="sec2">
+    <div class="section-title">ข้อมูลผู้จอง</div>
+    <div class="form-group">
+      <label class="form-label">ชื่อ-นามสกุล <span>*</span></label>
+      <input class="form-input" type="text" id="fname" placeholder="กรอกชื่อ-นามสกุล">
+    </div>
+    <div class="form-group">
+      <label class="form-label">เบอร์โทรศัพท์ <span>*</span></label>
+      <input class="form-input" type="tel" id="fphone" placeholder="0812345678">
+    </div>
+    <div class="form-group">
+      <label class="form-label">LINE ID (ถ้ามี)</label>
+      <input class="form-input" type="text" id="fline" placeholder="@lineId">
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ</label>
+      <input class="form-input" type="text" id="fnote" placeholder="ต้องการข้อมูลเพิ่มเติม...">
+    </div>
+    <div id="alertInfo"></div>
+    <button class="btn btn-primary" onclick="submitBooking()">ยืนยันการจอง →</button>
+    <br><br>
+    <button class="btn btn-outline" onclick="goStep(1)">← ย้อนกลับ</button>
+  </div>
+
+  <!-- Section 3 -->
+  <div class="section" id="sec3">
+    <div class="section-title">ชำระเงิน</div>
+    <div class="alert alert-info">📋 รหัสจองของคุณ: <strong id="displayBookingId">-</strong></div>
+    <div class="bank-box">
+      <h3>💳 โอนเงินมาที่บัญชีนี้</h3>
+      <div class="bank-account" id="bankAccount">-</div>
+      <div class="bank-amount" id="payAmount">- บาท</div>
+    </div>
+    <div class="section-title">อัปโหลดสลิปการโอน</div>
+    <div class="upload-area" id="uploadArea" onclick="document.getElementById('slipFile').click()">
+      <div class="upload-icon">📸</div>
+      <div class="upload-text">แตะเพื่อเลือกรูปสลิป</div>
+      <img id="previewImg" class="preview-img" style="display:none;">
+    </div>
+    <input type="file" id="slipFile" accept="image/*" style="display:none;" onchange="previewSlip(event)">
+    <div id="alertPayment"></div>
+    <button class="btn btn-gold" onclick="uploadSlip()">อัปโหลดสลิป ✓</button>
+  </div>
+
+  <!-- Section 4 -->
+  <div class="section" id="sec4">
+    <div class="success-screen">
+      <div class="success-icon">🎉</div>
+      <h2 style="font-size:24px;margin-bottom:10px;">จองสำเร็จแล้ว!</h2>
+      <p style="color:var(--text-dim);margin-bottom:20px;">ทีมงานจะตรวจสอบและยืนยันการจองของคุณในเร็วๆ นี้</p>
+      <div class="booking-id-box" id="successBookingId">-</div>
+      <p style="color:var(--text-dim);font-size:14px;">บันทึกรหัสนี้ไว้เพื่อติดตามสถานะ</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ⚠️ แก้ไข URL ตรงนี้ให้เป็น Web App URL ของคุณ
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwPi98Iv73iGgrvX8G-YePns0_TykgM2e_S3un2uNltYYPrLqN6kXz4Debqb_U7-zu4Tg/exec';
+
+let selectedTable = null;
+let seatCount = 1;
+let bookingId = '';
+
+async function loadTables() {
+  try {
+    const res = await post({ action: 'getAvailableTables' });
+    document.getElementById('loadingTables').style.display = 'none';
+    if (res && res.tables) {
+      renderTables(res.tables);
+    } else {
+      document.getElementById('tableGrid').innerHTML = '<div class="alert alert-error">โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรชหน้า</div>';
+    }
+  } catch(e) {
+    document.getElementById('loadingTables').style.display = 'none';
+    document.getElementById('tableGrid').innerHTML = '<div class="alert alert-error">เกิดข้อผิดพลาด: ' + e.message + '</div>';
+  }
+}
+
+function renderTables(tables) {
+  const grid = document.getElementById('tableGrid');
+  if (!tables.length) {
+    grid.innerHTML = '<div class="alert alert-info">ไม่มีที่นั่งในขณะนี้</div>';
+    return;
+  }
+  grid.innerHTML = tables.map((t, idx) => `
+    <div class="table-card ${t.available === 0 ? 'unavailable' : ''}" id="tcard_${idx}" onclick="selectTable(${idx})">
+      <div class="table-badge" style="background:${t.color}22;color:${t.color};">🎫</div>
+      <div class="table-info">
+        <div class="table-name">${t.name}</div>
+        <div class="table-desc">${t.description || ''}</div>
+        <div class="table-meta">
+          <span class="table-price">฿${Number(t.price).toLocaleString('th-TH')} / ที่นั่ง</span>
+          <span class="table-seats">เหลือ <span>${t.available}</span> ที่</span>
+        </div>
+      </div>
+      <div class="check-icon"></div>
+    </div>
+  `).join('');
+  window._tables = tables;
+}
+
+function selectTable(idx) {
+  const t = window._tables[idx];
+  selectedTable = t;
+  document.querySelectorAll('.table-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('tcard_' + idx).classList.add('selected');
+  seatCount = 1;
+  updateSeatDisplay();
+  document.getElementById('seatRow').style.display = 'block';
+}
+
+function changeSeat(delta) {
+  if (!selectedTable) return;
+  seatCount = Math.max(1, Math.min(selectedTable.available, seatCount + delta));
+  updateSeatDisplay();
+}
+
+function updateSeatDisplay() {
+  if (!selectedTable) return;
+  document.getElementById('seatCount').textContent = seatCount;
+  document.getElementById('maxSeats').textContent = `(สูงสุด ${selectedTable.available} ที่)`;
+  document.getElementById('sumTable').textContent = selectedTable.name;
+  document.getElementById('sumPrice').textContent = `฿${Number(selectedTable.price).toLocaleString('th-TH')}`;
+  document.getElementById('sumSeats').textContent = `${seatCount} ที่นั่ง`;
+  document.getElementById('sumTotal').textContent = `฿${(selectedTable.price * seatCount).toLocaleString('th-TH')}`;
+}
+
+function goStep(n) {
+  if (n === 2 && !selectedTable) { alert('กรุณาเลือกระดับบัตรก่อน'); return; }
+  [1,2,3,4].forEach(i => {
+    document.getElementById('sec'+i).classList.remove('active');
+    const s = document.getElementById('step'+i);
+    s.classList.remove('active','done');
+    if (i < n) s.classList.add('done');
+    else if (i === n) s.classList.add('active');
+  });
+  document.getElementById('sec'+n).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+async function submitBooking() {
+  const name = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  if (!name || !phone) { showAlert('alertInfo', 'error', 'กรุณากรอกชื่อและเบอร์โทร'); return; }
+  if (!selectedTable) { showAlert('alertInfo', 'error', 'กรุณาเลือกระดับบัตร'); return; }
+
+  showAlert('alertInfo', 'info', 'กำลังส่งข้อมูล...');
+  const res = await post({
+    action: 'createBooking',
+    tableId: selectedTable.id,
+    seats: seatCount,
+    name, phone,
+    lineId: document.getElementById('fline').value.trim(),
+    note: document.getElementById('fnote').value.trim(),
+  });
+
+  if (res && res.success) {
+    bookingId = res.bookingId;
+    document.getElementById('displayBookingId').textContent = bookingId;
+    document.getElementById('bankAccount').textContent = res.bankAccount;
+    document.getElementById('payAmount').textContent = `฿${Number(res.totalPrice).toLocaleString('th-TH')} บาท`;
+    goStep(3);
+  } else {
+    showAlert('alertInfo', 'error', (res && res.message) || 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+  }
+}
+
+function previewSlip(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('previewImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('uploadArea').classList.add('has-file');
+  };
+  reader.readAsDataURL(file);
+}
+
+async function uploadSlip() {
+  const file = document.getElementById('slipFile').files[0];
+  if (!file) { showAlert('alertPayment', 'error', 'กรุณาเลือกรูปสลิป'); return; }
+  if (!bookingId) { showAlert('alertPayment', 'error', 'ไม่พบรหัสการจอง'); return; }
+
+  showAlert('alertPayment', 'info', 'กำลังอัปโหลด...');
+  const reader = new FileReader();
+  reader.onload = async ev => {
+    const ext = file.name.split('.').pop();
+    const res = await post({
+      action: 'uploadSlip',
+      bookingId,
+      base64: ev.target.result,
+      mimeType: file.type,
+      ext,
+    });
+    if (res && res.success) {
+      document.getElementById('successBookingId').textContent = bookingId;
+      goStep(4);
+    } else {
+      showAlert('alertPayment', 'error', (res && res.message) || 'อัปโหลดไม่สำเร็จ');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function showAlert(id, type, msg) {
+  document.getElementById(id).innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+}
+
+async function post(data) {
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'text/plain' },
+    });
+    const text = await res.text();
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('POST error:', e);
+    return { success: false, message: e.message };
+  }
+}
+
+// Init
+loadTables();
+</script>
+</body>
+</html>
