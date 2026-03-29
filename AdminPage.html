@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - ระบบจองบัตรคอนเสิร์ต</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #D4AF37;
+  --dark: #0a0a0f;
+  --dark3: #1a1a28;
+  --purple: #6C3FC5;
+  --pink: #E040A0;
+  --text: #f0f0f8;
+  --text-dim: #9090b0;
+  --green: #4CAF50;
+  --red: #f44336;
+  --orange: #FF9800;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans Thai', sans-serif; background: var(--dark); color: var(--text); min-height: 100vh; }
+
+/* Login */
+.login-wrap { display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; }
+.login-box { background: var(--dark3); border: 1px solid rgba(212,175,55,0.2); border-radius: 20px; padding: 40px; width: 100%; max-width: 400px; text-align: center; }
+.login-box h2 { color: var(--gold); margin-bottom: 8px; font-size: 22px; }
+.login-box p { color: var(--text-dim); margin-bottom: 28px; font-size: 14px; }
+
+/* Layout */
+.admin-wrap { display: none; }
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+  background: var(--dark3); border-right: 1px solid rgba(255,255,255,0.07);
+  padding: 20px 0; overflow-y: auto; z-index: 100;
+}
+.sidebar-logo { padding: 0 20px 20px; border-bottom: 1px solid rgba(255,255,255,0.07); margin-bottom: 14px; }
+.sidebar-logo h3 { color: var(--gold); font-size: 14px; }
+.sidebar-logo p { color: var(--text-dim); font-size: 11px; margin-top: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 20px; cursor: pointer;
+  color: var(--text-dim); font-size: 14px; transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+.nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+.nav-item.active { background: rgba(108,63,197,0.15); color: var(--purple); border-left-color: var(--purple); }
+.nav-icon { font-size: 18px; width: 24px; text-align: center; }
+.nav-logout { margin-top: auto; border-top: 1px solid rgba(255,255,255,0.07); padding-top: 14px; margin-top: 20px; }
+
+.main-content { margin-left: 220px; padding: 24px; min-height: 100vh; }
+.page { display: none; }
+.page.active { display: block; }
+.page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.page-subtitle { color: var(--text-dim); font-size: 14px; margin-bottom: 24px; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 28px; }
+.stat-card { background: var(--dark3); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; padding: 20px; }
+.stat-label { color: var(--text-dim); font-size: 12px; margin-bottom: 8px; }
+.stat-value { font-size: 28px; font-weight: 800; }
+.stat-card.gold { border-color: rgba(212,175,55,0.3); }
+.stat-card.gold .stat-value { color: var(--gold); }
+.stat-card.green .stat-value { color: var(--green); }
+.stat-card.orange .stat-value { color: var(--orange); }
+.stat-card.red .stat-value { color: var(--red); }
+.stat-card.purple .stat-value { color: var(--purple); }
+
+/* Table */
+.card { background: var(--dark3); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+.card-header { padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,0.07); display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.card-header h3 { font-size: 15px; font-weight: 600; }
+.filter-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+.filter-btn { padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--text-dim); font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: 'Noto Sans Thai', sans-serif; }
+.filter-btn:hover, .filter-btn.active { background: var(--purple); color: white; border-color: var(--purple); }
+
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { padding: 12px 16px; text-align: left; color: var(--text-dim); font-weight: 500; font-size: 12px; border-bottom: 1px solid rgba(255,255,255,0.07); white-space: nowrap; }
+td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,0.02); }
+
+/* Status badges */
+.badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badge-pending { background: rgba(255,152,0,0.15); color: var(--orange); }
+.badge-slip { background: rgba(33,150,243,0.15); color: #64B5F6; }
+.badge-approved { background: rgba(76,175,80,0.15); color: var(--green); }
+.badge-confirmed { background: rgba(212,175,55,0.15); color: var(--gold); }
+.badge-cancelled { background: rgba(244,67,54,0.15); color: #EF9A9A; }
+
+/* Inputs & Forms */
+.form-input {
+  width: 100%; padding: 12px 14px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px; color: var(--text);
+  font-family: 'Noto Sans Thai', sans-serif; font-size: 14px;
+  outline: none; transition: border-color 0.2s;
+}
+.form-input:focus { border-color: var(--purple); }
+.form-input::placeholder { color: var(--text-dim); }
+.form-label { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; display: block; }
+.form-group { margin-bottom: 16px; }
+
+/* Buttons */
+.btn { padding: 10px 18px; border-radius: 8px; border: none; font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-primary { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; }
+.btn-primary:hover { opacity: 0.9; }
+.btn-gold { background: var(--gold); color: #000; }
+.btn-gold:hover { opacity: 0.9; }
+.btn-green { background: var(--green); color: white; }
+.btn-red { background: var(--red); color: white; }
+.btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
+.btn-outline:hover { border-color: rgba(255,255,255,0.4); }
+.btn-block { width: 100%; }
+
+/* Modal */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--dark3); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; }
+.modal h3 { font-size: 18px; margin-bottom: 20px; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+
+/* Alert */
+.alert { padding: 12px 16px; border-radius: 8px; margin: 12px 0; font-size: 13px; }
+.alert-success { background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.3); color: #81C784; }
+.alert-error { background: rgba(244,67,54,0.15); border: 1px solid rgba(244,67,54,0.3); color: #EF9A9A; }
+.alert-info { background: rgba(33,150,243,0.15); border: 1px solid rgba(33,150,243,0.3); color: #90CAF9; }
+
+/* Slip preview */
+.slip-img { max-width: 100%; border-radius: 8px; margin-top: 10px; }
+.slip-link { color: var(--gold); text-decoration: none; font-size: 13px; }
+.slip-link:hover { text-decoration: underline; }
+
+/* Color picker row */
+.color-options { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+.color-opt { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: all 0.2s; }
+.color-opt.selected { border-color: white; transform: scale(1.15); }
+
+/* Mobile sidebar toggle */
+.sidebar-toggle { display: none; position: fixed; top: 16px; left: 16px; z-index: 300; background: var(--dark3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 8px 10px; cursor: pointer; font-size: 18px; }
+@media (max-width: 768px) {
+  .sidebar-toggle { display: block; }
+  .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+  .sidebar.open { transform: translateX(0); }
+  .main-content { margin-left: 0; padding: 16px; padding-top: 60px; }
+}
+
+.loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.2); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.7s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div style="font-size:48px;margin-bottom:16px;">🔐</div>
+    <h2>Admin Panel</h2>
+    <p>ระบบจองบัตรคอนเสิร์ต</p>
+    <div class="form-group" style="text-align:left;">
+      <label class="form-label">รหัสผ่าน</label>
+      <input class="form-input" type="password" id="loginPass" placeholder="กรอกรหัสผ่าน" onkeydown="if(event.key==='Enter') doLogin()">
+    </div>
+    <div id="loginAlert"></div>
+    <button class="btn btn-primary btn-block" onclick="doLogin()">เข้าสู่ระบบ</button>
+  </div>
+</div>
+
+<!-- Admin Layout -->
+<button class="sidebar-toggle" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<div class="admin-wrap" id="adminWrap">
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <h3>🎫 Admin Panel</h3>
+      <p id="sidebarConcertName">Concert 2025</p>
+    </div>
+    <div class="nav-item active" onclick="showPage('dashboard')"><span class="nav-icon">📊</span> Dashboard</div>
+    <div class="nav-item" onclick="showPage('bookings')"><span class="nav-icon">📋</span> การจอง</div>
+    <div class="nav-item" onclick="showPage('tables')"><span class="nav-icon">🪑</span> จัดการระดับบัตร</div>
+    <div class="nav-item" onclick="showPage('settings')"><span class="nav-icon">⚙️</span> ตั้งค่า</div>
+    <div class="nav-logout">
+      <div class="nav-item" onclick="doLogout()"><span class="nav-icon">🚪</span> ออกจากระบบ</div>
+    </div>
+  </div>
+
+  <div class="main-content">
+
+    <!-- Dashboard -->
+    <div class="page active" id="page-dashboard">
+      <div class="page-title">Dashboard</div>
+      <div class="page-subtitle">ภาพรวมการจองทั้งหมด</div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-label">การจองทั้งหมด</div><div class="stat-value" id="statTotal">-</div></div>
+        <div class="stat-card green"><div class="stat-label">อนุมัติแล้ว</div><div class="stat-value" id="statApproved">-</div></div>
+        <div class="stat-card orange"><div class="stat-label">รอตรวจสลิป</div><div class="stat-value" id="statSlip">-</div></div>
+        <div class="stat-card purple"><div class="stat-label">รอชำระเงิน</div><div class="stat-value" id="statPending">-</div></div>
+        <div class="stat-card red"><div class="stat-label">ยกเลิก</div><div class="stat-value" id="statCancelled">-</div></div>
+        <div class="stat-card gold"><div class="stat-label">รายได้รวม (บาท)</div><div class="stat-value" id="statRevenue">-</div></div>
+      </div>
+      <div id="dashAlert"></div>
+    </div>
+
+    <!-- Bookings -->
+    <div class="page" id="page-bookings">
+      <div class="page-title">การจองทั้งหมด</div>
+      <div class="page-subtitle">ดูและจัดการสถานะการจอง</div>
+      <div class="card">
+        <div class="card-header">
+          <h3>รายการจอง</h3>
+          <div class="filter-bar">
+            <button class="filter-btn active" onclick="filterBookings('all', this)">ทั้งหมด</button>
+            <button class="filter-btn" onclick="filterBookings('รอชำระเงิน', this)">รอชำระ</button>
+            <button class="filter-btn" onclick="filterBookings('รอตรวจสลิป', this)">รอตรวจสลิป</button>
+            <button class="filter-btn" onclick="filterBookings('อนุมัติแล้ว', this)">อนุมัติ</button>
+            <button class="filter-btn" onclick="filterBookings('ยกเลิก', this)">ยกเลิก</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>รหัสจอง</th>
+                <th>ชื่อ</th>
+                <th>โทร</th>
+                <th>ระดับ</th>
+                <th>ที่นั่ง</th>
+                <th>ราคา</th>
+                <th>สถานะ</th>
+                <th>วันที่</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTbody">
+              <tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:30px;">กำลังโหลด...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tables Management -->
+    <div class="page" id="page-tables">
+      <div class="page-title">จัดการระดับบัตร</div>
+      <div class="page-subtitle">เพิ่ม แก้ไข ลบ ระดับบัตรและราคา</div>
+      <button class="btn btn-primary" onclick="openAddTable()" style="margin-bottom:16px;">+ เพิ่มระดับบัตร</button>
+      <div class="card">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>ชื่อระดับ</th>
+                <th>ราคา/ที่นั่ง</th>
+                <th>ที่นั่งทั้งหมด</th>
+                <th>คงเหลือ</th>
+                <th>สถานะ</th>
+                <th>จัดการ</th>
+              </tr>
+            </thead>
+            <tbody id="tablesTbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--text-dim);padding:30px;">กำลังโหลด...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="page" id="page-settings">
+      <div class="page-title">ตั้งค่าระบบ</div>
+      <div class="page-subtitle">แก้ไขข้อมูลคอนเสิร์ตและการชำระเงิน</div>
+      <div class="card">
+        <div style="padding:20px;">
+          <div class="form-group">
+            <label class="form-label">ชื่อคอนเสิร์ต</label>
+            <input class="form-input" id="setConcertName" placeholder="CONCERT 2025">
+          </div>
+          <div class="form-group">
+            <label class="form-label">วันที่จัดงาน</label>
+            <input class="form-input" id="setConcertDate" placeholder="31 ธันวาคม 2568">
+          </div>
+          <div class="form-group">
+            <label class="form-label">สถานที่จัดงาน</label>
+            <input class="form-input" id="setConcertVenue" placeholder="ชื่อสถานที่">
+          </div>
+          <div class="form-group">
+            <label class="form-label">เลขบัญชีธนาคาร</label>
+            <input class="form-input" id="setBankAccount" placeholder="123-4-56789-0 ธนาคารกสิกรไทย ชื่อบัญชี">
+          </div>
+          <div id="settingsAlert"></div>
+          <button class="btn btn-gold" onclick="saveSettings()">💾 บันทึกการตั้งค่า</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal: Booking Detail -->
+<div class="modal-bg" id="modalBooking">
+  <div class="modal">
+    <h3>📋 รายละเอียดการจอง</h3>
+    <div id="modalBookingContent"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalBooking')">ปิด</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Add/Edit Table -->
+<div class="modal-bg" id="modalTable">
+  <div class="modal">
+    <h3 id="modalTableTitle">เพิ่มระดับบัตร</h3>
+    <input type="hidden" id="editTableId">
+    <div class="form-group">
+      <label class="form-label">ชื่อระดับ</label>
+      <input class="form-input" id="tName" placeholder="เช่น VIP, GOLD, SILVER">
+    </div>
+    <div class="form-group">
+      <label class="form-label">ราคาต่อที่นั่ง (บาท)</label>
+      <input class="form-input" type="number" id="tPrice" placeholder="1500">
+    </div>
+    <div class="form-group">
+      <label class="form-label">จำนวนที่นั่งทั้งหมด</label>
+      <input class="form-input" type="number" id="tTotal" placeholder="50">
+    </div>
+    <div class="form-group">
+      <label class="form-label">คำอธิบาย</label>
+      <input class="form-input" id="tDesc" placeholder="รายละเอียดระดับบัตร">
+    </div>
+    <div class="form-group">
+      <label class="form-label">สี</label>
+      <div class="color-options" id="colorOptions">
+        <div class="color-opt selected" style="background:#FFD700;" data-color="#FFD700" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#FFA500;" data-color="#FFA500" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#C0C0C0;" data-color="#C0C0C0" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#4CAF50;" data-color="#4CAF50" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#6C3FC5;" data-color="#6C3FC5" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#E040A0;" data-color="#E040A0" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#2196F3;" data-color="#2196F3" onclick="selectColor(this)"></div>
+        <div class="color-opt" style="background:#FF5722;" data-color="#FF5722" onclick="selectColor(this)"></div>
+      </div>
+    </div>
+    <div id="tableAlert"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalTable')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="saveTable()">บันทึก</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Update Status -->
+<div class="modal-bg" id="modalStatus">
+  <div class="modal">
+    <h3>🔄 เปลี่ยนสถานะการจอง</h3>
+    <input type="hidden" id="statusBookingId">
+    <div class="form-group">
+      <label class="form-label">รหัสจอง: <strong id="statusBkId">-</strong></label>
+    </div>
+    <div class="form-group">
+      <label class="form-label">สถานะใหม่</label>
+      <select class="form-input" id="newStatus">
+        <option value="รอชำระเงิน">⏳ รอชำระเงิน</option>
+        <option value="รอตรวจสลิป">🔍 รอตรวจสลิป</option>
+        <option value="อนุมัติแล้ว">✅ อนุมัติแล้ว</option>
+        <option value="ยืนยันแล้ว">🎉 ยืนยันแล้ว</option>
+        <option value="ยกเลิก">❌ ยกเลิก</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">หมายเหตุ (ถ้ามี)</label>
+      <input class="form-input" id="statusNote" placeholder="หมายเหตุเพิ่มเติม...">
+    </div>
+    <div id="statusAlert"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeModal('modalStatus')">ยกเลิก</button>
+      <button class="btn btn-primary" onclick="updateStatus()">บันทึกสถานะ</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// ⚠️ แก้ไข URL ตรงนี้ให้เป็น Web App URL ของคุณ
+// ============================================================
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwPi98Iv73iGgrvX8G-YePns0_TykgM2e_S3un2uNltYYPrLqN6kXz4Debqb_U7-zu4Tg/exec';
+
+let adminToken = '';
+let allBookings = [];
+let selectedColor = '#FFD700';
+
+// ============================================================
+// AUTH
+// ============================================================
+async function doLogin() {
+  const pass = document.getElementById('loginPass').value.trim();
+  if (!pass) return;
+  document.getElementById('loginAlert').innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span>กำลังเข้าสู่ระบบ...</div>';
+  const res = await post({ action: 'adminLogin', password: pass });
+  if (res && res.success) {
+    adminToken = res.token;
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('adminWrap').style.display = 'block';
+    loadDashboard();
+    loadSettings();
+  } else {
+    document.getElementById('loginAlert').innerHTML = '<div class="alert alert-error">รหัสผ่านไม่ถูกต้อง</div>';
+  }
+}
+
+function doLogout() {
+  adminToken = '';
+  document.getElementById('loginWrap').style.display = 'flex';
+  document.getElementById('adminWrap').style.display = 'none';
+  document.getElementById('loginPass').value = '';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  document.getElementById('sidebar').classList.remove('open');
+
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'bookings') loadBookings();
+  if (name === 'tables') loadTables();
+  if (name === 'settings') loadSettings();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+async function loadDashboard() {
+  const res = await post({ action: 'getStats', token: adminToken });
+  if (res && res.success) {
+    const s = res.stats;
+    document.getElementById('statTotal').textContent = s.total;
+    document.getElementById('statApproved').textContent = s.approved;
+    document.getElementById('statSlip').textContent = s.pendingSlip;
+    document.getElementById('statPending').textContent = s.pending;
+    document.getElementById('statCancelled').textContent = s.cancelled;
+    document.getElementById('statRevenue').textContent = Number(s.revenue).toLocaleString('th-TH');
+  }
+}
+
+// ============================================================
+// BOOKINGS
+// ============================================================
+async function loadBookings() {
+  document.getElementById('bookingsTbody').innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:30px;"><span class="loading-spinner"></span>กำลังโหลด...</td></tr>';
+  const res = await post({ action: 'getBookings', token: adminToken });
+  if (res && res.success) {
+    allBookings = res.bookings;
+    renderBookings(allBookings);
+  }
+}
+
+function renderBookings(bookings) {
+  const tbody = document.getElementById('bookingsTbody');
+  if (!bookings.length) {
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--text-dim);padding:30px;">ไม่มีการจอง</td></tr>';
+    return;
+  }
+  tbody.innerHTML = bookings.map(b => `
+    <tr>
+      <td><strong style="color:var(--gold);font-size:12px;">${b.id}</strong></td>
+      <td>${b.name}</td>
+      <td>${b.phone}</td>
+      <td>${b.table}</td>
+      <td>${b.seats}</td>
+      <td>฿${Number(b.total).toLocaleString('th-TH')}</td>
+      <td>${statusBadge(b.status)}</td>
+      <td style="font-size:11px;color:var(--text-dim);">${b.date || '-'}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-outline" onclick="viewBooking('${b.id}')">ดู</button>
+          <button class="btn btn-sm btn-primary" onclick="openStatus('${b.id}','${b.status}')">สถานะ</button>
+          ${b.slipUrl ? `<a href="${b.slipUrl}" target="_blank" class="btn btn-sm btn-gold">สลิป</a>` : ''}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filterBookings(status, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (status === 'all') renderBookings(allBookings);
+  else renderBookings(allBookings.filter(b => b.status === status));
+}
+
+function statusBadge(status) {
+  const map = {
+    'รอชำระเงิน': 'badge-pending',
+    'รอตรวจสลิป': 'badge-slip',
+    'อนุมัติแล้ว': 'badge-approved',
+    'ยืนยันแล้ว': 'badge-confirmed',
+    'ยกเลิก': 'badge-cancelled',
+  };
+  return `<span class="badge ${map[status] || ''}">${status}</span>`;
+}
+
+function viewBooking(id) {
+  const b = allBookings.find(x => x.id === id);
+  if (!b) return;
+  document.getElementById('modalBookingContent').innerHTML = `
+    <div style="display:grid;gap:10px;font-size:14px;">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">รหัสจอง</span><strong style="color:var(--gold);">${b.id}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">ชื่อ</span><span>${b.name}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">เบอร์โทร</span><span>${b.phone}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">LINE ID</span><span>${b.lineId || '-'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">ระดับบัตร</span><span>${b.table}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">จำนวนที่นั่ง</span><span>${b.seats} ที่นั่ง</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">ราคารวม</span><strong style="color:var(--gold);">฿${Number(b.total).toLocaleString('th-TH')}</strong>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">สถานะ</span>${statusBadge(b.status)}
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">วันที่จอง</span><span style="font-size:12px;">${b.date || '-'}</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.07);">
+        <span style="color:var(--text-dim);">หมายเหตุ</span><span>${b.note || '-'}</span>
+      </div>
+      ${b.slipUrl ? `
+      <div style="padding:8px 0;">
+        <div style="color:var(--text-dim);margin-bottom:8px;">สลิปการโอน</div>
+        <a href="${b.slipUrl}" target="_blank" class="btn btn-gold btn-sm">🔗 ดูสลิปใน Drive</a>
+      </div>` : '<div style="color:var(--text-dim);font-size:13px;">ยังไม่มีสลิป</div>'}
+    </div>
+  `;
+  document.getElementById('modalBooking').classList.add('open');
+}
+
+function openStatus(id, currentStatus) {
+  document.getElementById('statusBookingId').value = id;
+  document.getElementById('statusBkId').textContent = id;
+  document.getElementById('newStatus').value = currentStatus;
+  document.getElementById('statusNote').value = '';
+  document.getElementById('statusAlert').innerHTML = '';
+  document.getElementById('modalStatus').classList.add('open');
+}
+
+async function updateStatus() {
+  const bookingId = document.getElementById('statusBookingId').value;
+  const status = document.getElementById('newStatus').value;
+  const note = document.getElementById('statusNote').value;
+  document.getElementById('statusAlert').innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span>กำลังบันทึก...</div>';
+  const res = await post({ action: 'updateBookingStatus', token: adminToken, bookingId, status, note });
+  if (res && res.success) {
+    document.getElementById('statusAlert').innerHTML = '<div class="alert alert-success">✅ อัปเดตสำเร็จ</div>';
+    setTimeout(() => { closeModal('modalStatus'); loadBookings(); }, 1000);
+  } else {
+    document.getElementById('statusAlert').innerHTML = `<div class="alert alert-error">${(res && res.message) || 'เกิดข้อผิดพลาด'}</div>`;
+  }
+}
+
+// ============================================================
+// TABLES
+// ============================================================
+async function loadTables() {
+  const res = await post({ action: 'getTables', token: adminToken });
+  if (res && res.success) renderTablesAdmin(res.tables);
+}
+
+function renderTablesAdmin(tables) {
+  const tbody = document.getElementById('tablesTbody');
+  if (!tables.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:var(--text-dim);">ยังไม่มีระดับบัตร</td></tr>'; return; }
+  tbody.innerHTML = tables.map(t => `
+    <tr>
+      <td style="font-size:11px;color:var(--text-dim);">${t.id}</td>
+      <td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${t.color};margin-right:8px;"></span>${t.name}</td>
+      <td>฿${Number(t.price).toLocaleString('th-TH')}</td>
+      <td>${t.total}</td>
+      <td><strong style="color:${t.available > 0 ? 'var(--green)' : 'var(--red)'};">${t.available}</strong></td>
+      <td>${t.active === true || t.active === 'TRUE' ? '<span class="badge badge-approved">เปิด</span>' : '<span class="badge badge-cancelled">ปิด</span>'}</td>
+      <td>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-sm btn-outline" onclick="openEditTable('${t.id}','${t.name}',${t.price},${t.total},'${t.description || ''}','${t.color}',${t.active})">แก้ไข</button>
+          <button class="btn btn-sm btn-red" onclick="deleteTable('${t.id}')">ลบ</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function openAddTable() {
+  document.getElementById('modalTableTitle').textContent = 'เพิ่มระดับบัตร';
+  document.getElementById('editTableId').value = '';
+  document.getElementById('tName').value = '';
+  document.getElementById('tPrice').value = '';
+  document.getElementById('tTotal').value = '';
+  document.getElementById('tDesc').value = '';
+  document.getElementById('tableAlert').innerHTML = '';
+  selectColorByValue('#FFD700');
+  document.getElementById('modalTable').classList.add('open');
+}
+
+function openEditTable(id, name, price, total, desc, color, active) {
+  document.getElementById('modalTableTitle').textContent = 'แก้ไขระดับบัตร';
+  document.getElementById('editTableId').value = id;
+  document.getElementById('tName').value = name;
+  document.getElementById('tPrice').value = price;
+  document.getElementById('tTotal').value = total;
+  document.getElementById('tDesc').value = desc;
+  document.getElementById('tableAlert').innerHTML = '';
+  selectColorByValue(color);
+  document.getElementById('modalTable').classList.add('open');
+}
+
+function selectColor(el) {
+  document.querySelectorAll('.color-opt').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedColor = el.dataset.color;
+}
+
+function selectColorByValue(color) {
+  selectedColor = color;
+  document.querySelectorAll('.color-opt').forEach(c => {
+    c.classList.toggle('selected', c.dataset.color === color);
+  });
+}
+
+async function saveTable() {
+  const id = document.getElementById('editTableId').value;
+  const name = document.getElementById('tName').value.trim();
+  const price = Number(document.getElementById('tPrice').value);
+  const total = Number(document.getElementById('tTotal').value);
+  const description = document.getElementById('tDesc').value.trim();
+  if (!name || !price || !total) {
+    document.getElementById('tableAlert').innerHTML = '<div class="alert alert-error">กรุณากรอกข้อมูลให้ครบ</div>';
+    return;
+  }
+  document.getElementById('tableAlert').innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span>กำลังบันทึก...</div>';
+  const action = id ? 'updateTable' : 'addTable';
+  const res = await post({ action, token: adminToken, id, name, price, total, description, color: selectedColor, active: true });
+  if (res && res.success) {
+    document.getElementById('tableAlert').innerHTML = '<div class="alert alert-success">✅ บันทึกสำเร็จ</div>';
+    setTimeout(() => { closeModal('modalTable'); loadTables(); }, 800);
+  } else {
+    document.getElementById('tableAlert').innerHTML = `<div class="alert alert-error">${(res && res.message) || 'เกิดข้อผิดพลาด'}</div>`;
+  }
+}
+
+async function deleteTable(id) {
+  if (!confirm('ต้องการลบระดับบัตรนี้ใช่ไหม?')) return;
+  const res = await post({ action: 'deleteTable', token: adminToken, id });
+  if (res && res.success) loadTables();
+  else alert('ลบไม่สำเร็จ: ' + (res && res.message));
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+async function loadSettings() {
+  const res = await post({ action: 'getSettings', token: adminToken });
+  if (res && res.success) {
+    const s = res.settings;
+    if (s.concert_name) { document.getElementById('setConcertName').value = s.concert_name; document.getElementById('sidebarConcertName').textContent = s.concert_name; }
+    if (s.concert_date) document.getElementById('setConcertDate').value = s.concert_date;
+    if (s.concert_venue) document.getElementById('setConcertVenue').value = s.concert_venue;
+    if (s.bank_account) document.getElementById('setBankAccount').value = s.bank_account;
+  }
+}
+
+async function saveSettings() {
+  document.getElementById('settingsAlert').innerHTML = '<div class="alert alert-info"><span class="loading-spinner"></span>กำลังบันทึก...</div>';
+  const res = await post({
+    action: 'updateSettings', token: adminToken,
+    settings: {
+      concert_name: document.getElementById('setConcertName').value,
+      concert_date: document.getElementById('setConcertDate').value,
+      concert_venue: document.getElementById('setConcertVenue').value,
+      bank_account: document.getElementById('setBankAccount').value,
+    }
+  });
+  if (res && res.success) {
+    document.getElementById('settingsAlert').innerHTML = '<div class="alert alert-success">✅ บันทึกสำเร็จ</div>';
+    document.getElementById('sidebarConcertName').textContent = document.getElementById('setConcertName').value;
+  } else {
+    document.getElementById('settingsAlert').innerHTML = `<div class="alert alert-error">${(res && res.message) || 'เกิดข้อผิดพลาด'}</div>`;
+  }
+}
+
+// ============================================================
+// MODAL & UTILS
+// ============================================================
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+document.querySelectorAll('.modal-bg').forEach(m => {
+  m.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.remove('open');
+  });
+});
+
+async function post(data) {
+  try {
+    const res = await fetch(GAS_URL, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      headers: { 'Content-Type': 'text/plain' },
+    });
+    const text = await res.text();
+    return JSON.parse(text);
+  } catch (e) {
+    console.error('POST error:', e);
+    return { success: false, message: e.message };
+  }
+}
+</script>
+</body>
+</html>
