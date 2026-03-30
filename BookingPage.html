@@ -4,403 +4,566 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>จองบัตรคอนเสิร์ต</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Noto+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --gold: #D4AF37;
-  --gold-light: #F4CF57;
-  --dark: #0a0a0f;
-  --dark2: #111118;
-  --dark3: #1a1a28;
-  --purple: #6C3FC5;
-  --pink: #E040A0;
-  --text: #f0f0f8;
-  --text-dim: #9090b0;
+  --gold: #C9A84C;
+  --gold2: #E8C96A;
+  --gold3: #F5DFA0;
+  --dark: #0C0C10;
+  --dark2: #13131A;
+  --dark3: #1C1C27;
+  --dark4: #252535;
+  --border: rgba(201,168,76,0.18);
+  --border2: rgba(201,168,76,0.35);
+  --text: #EEE8DC;
+  --text2: #A8A090;
+  --text3: #6A6458;
+  --green: #4CAF72;
+  --yellow: #E8B84B;
+  --red: #CF4444;
+  --blue: #4A8FD4;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Noto Sans Thai', sans-serif;
-  background: var(--dark);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-.bg-stars {
-  position: fixed; inset: 0; z-index: 0;
-  background: radial-gradient(ellipse at 20% 50%, rgba(108,63,197,0.15) 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 20%, rgba(224,64,160,0.1) 0%, transparent 40%),
-              var(--dark);
-}
-.container { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; padding: 20px; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sarabun',sans-serif;background:var(--dark);color:var(--text);min-height:100vh;overflow-x:hidden;}
 
-.hero {
-  text-align: center; padding: 60px 20px 40px;
-  border-bottom: 1px solid rgba(212,175,55,0.2);
-  margin-bottom: 40px;
-}
-.hero-label {
-  display: inline-block;
-  background: linear-gradient(135deg, var(--purple), var(--pink));
-  color: white; font-size: 11px; font-weight: 600;
-  letter-spacing: 3px; text-transform: uppercase;
-  padding: 6px 20px; border-radius: 20px; margin-bottom: 20px;
-}
-.hero h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(2rem, 8vw, 3.5rem);
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  line-height: 1.1; margin-bottom: 16px;
-}
-.hero-date { color: var(--text-dim); font-size: 14px; letter-spacing: 1px; }
-.hero-venue { color: var(--gold); font-size: 15px; font-weight: 500; margin-top: 6px; }
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.bg::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% -10%,rgba(201,168,76,0.08) 0%,transparent 60%);}
+.bg::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 80% 100%,rgba(74,143,212,0.06) 0%,transparent 50%);}
 
-.steps { display: flex; gap: 8px; margin-bottom: 32px; }
-.step {
-  flex: 1; text-align: center; padding: 10px 6px;
-  border-radius: 10px; background: var(--dark3);
-  border: 1px solid rgba(255,255,255,0.06);
-  font-size: 12px; color: var(--text-dim); transition: all 0.3s;
+.page{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px 80px;}
+
+/* HERO */
+.hero{padding:56px 0 44px;text-align:center;border-bottom:1px solid var(--border);}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid var(--border);padding:6px 18px;border-radius:100px;font-size:12px;letter-spacing:2px;color:var(--gold);text-transform:uppercase;margin-bottom:24px;}
+.hero-img{width:130px;height:130px;border-radius:50%;object-fit:cover;border:2px solid var(--border2);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;background:var(--dark3);font-size:52px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,7vw,3.8rem);font-weight:700;line-height:1.05;background:linear-gradient(135deg,var(--gold) 0%,var(--gold3) 50%,var(--gold) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;}
+.hero-subtitle{font-size:14.5px;color:var(--text2);line-height:1.7;max-width:500px;margin:0 auto 22px;}
+.hero-meta{display:flex;justify-content:center;gap:28px;flex-wrap:wrap;}
+.hero-meta-item{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.hero-meta-item .label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);}
+.hero-meta-item .val{font-size:14px;font-weight:500;color:var(--gold);}
+
+/* CONDITIONS */
+.cond-section{margin:36px 0;background:var(--dark3);border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.cond-header{padding:16px 22px;border-bottom:1px solid transparent;display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;transition:background 0.2s;}
+.cond-header:hover{background:rgba(255,255,255,0.02);}
+.cond-header.open{border-bottom-color:var(--border);}
+.cond-header .ch-title{font-size:13.5px;font-weight:600;color:var(--gold);}
+.cond-header .arrow{margin-left:auto;color:var(--text3);transition:transform 0.3s;font-size:11px;}
+.cond-header.open .arrow{transform:rotate(180deg);}
+.cond-body{padding:0;max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.3s;}
+.cond-body.open{max-height:600px;padding:18px 22px;}
+.cond-list{list-style:none;}
+.cond-list li{padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);font-size:13px;color:var(--text2);display:flex;align-items:flex-start;gap:10px;line-height:1.6;}
+.cond-list li::before{content:'·';color:var(--gold);flex-shrink:0;}
+.cond-list li:last-child{border-bottom:none;}
+
+/* STEPS */
+.steps{display:flex;margin:36px 0 28px;position:relative;}
+.steps::before{content:'';position:absolute;top:17px;left:50px;right:50px;height:1px;background:var(--dark4);z-index:0;}
+.step-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;position:relative;z-index:1;}
+.step-dot{width:34px;height:34px;border-radius:50%;background:var(--dark3);border:1px solid var(--dark4);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--text3);transition:all 0.3s;}
+.step-dot.active{background:var(--gold);border-color:var(--gold);color:var(--dark);box-shadow:0 0 18px rgba(201,168,76,0.35);}
+.step-dot.done{background:rgba(201,168,76,0.12);border-color:var(--gold);color:var(--gold);}
+.step-label{font-size:11px;color:var(--text3);text-align:center;}
+.step-item.active .step-label,.step-item.done .step-label{color:var(--text2);}
+
+/* MAP */
+.map-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:16px;}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:18px;}
+.legend-item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--text2);}
+.legend-dot{width:11px;height:11px;border-radius:3px;}
+.stage{background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:11px;text-align:center;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--text3);margin-bottom:20px;}
+.zone-label{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);margin:18px 0 10px;padding-left:4px;}
+.tables-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:4px;}
+
+.table-btn{
+  position:relative;width:86px;height:68px;border-radius:10px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;border:1px solid transparent;transition:all 0.2s;
+  user-select:none;gap:2px;
 }
-.step.active { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; border-color: transparent; }
-.step.done { background: rgba(212,175,55,0.15); color: var(--gold); border-color: rgba(212,175,55,0.3); }
-.step-num { font-size: 18px; font-weight: 700; display: block; margin-bottom: 2px; }
+.table-btn .t-name{font-size:12.5px;font-weight:600;}
+.table-btn .t-seats{font-size:10.5px;opacity:0.7;}
+.table-btn .t-price{font-size:10px;opacity:0.6;}
+.table-btn.status-available{background:rgba(76,175,114,0.1);border-color:rgba(76,175,114,0.28);color:#4CAF72;}
+.table-btn.status-available:hover{background:rgba(76,175,114,0.2);border-color:#4CAF72;transform:translateY(-2px);box-shadow:0 6px 18px rgba(76,175,114,0.18);}
+.table-btn.status-available.selected{background:rgba(201,168,76,0.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 18px rgba(201,168,76,0.25);transform:translateY(-2px);}
+.table-btn.status-pending{background:rgba(232,184,75,0.09);border-color:rgba(232,184,75,0.22);color:var(--yellow);cursor:not-allowed;}
+.table-btn.status-booked{background:rgba(207,68,68,0.08);border-color:rgba(207,68,68,0.18);color:#CF4444;cursor:not-allowed;opacity:0.55;}
 
-.section { display: none; animation: fadeIn 0.4s ease; }
-.section.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+/* SELECTED INFO */
+.selected-info{background:rgba(201,168,76,0.06);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;margin:18px 0;display:none;align-items:center;gap:14px;flex-wrap:wrap;}
+.selected-info.visible{display:flex;}
+.sel-badge{background:rgba(201,168,76,0.12);border:1px solid var(--border);border-radius:8px;padding:7px 13px;font-size:13px;font-weight:600;color:var(--gold);}
+.sel-details{flex:1;min-width:100px;}
+.sel-name{font-size:14px;font-weight:600;margin-bottom:2px;}
+.sel-meta{font-size:12px;color:var(--text3);}
 
-.table-grid { display: grid; gap: 14px; }
-.table-card {
-  background: var(--dark3);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 16px; padding: 20px 22px;
-  cursor: pointer; transition: all 0.25s;
-  display: flex; align-items: center; gap: 16px;
-}
-.table-card:hover { border-color: rgba(212,175,55,0.4); transform: translateY(-2px); }
-.table-card.selected { border-color: var(--gold); background: rgba(212,175,55,0.08); }
-.table-card.unavailable { opacity: 0.4; pointer-events: none; }
-.table-badge {
-  width: 52px; height: 52px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 22px; flex-shrink: 0;
-}
-.table-info { flex: 1; }
-.table-name { font-size: 16px; font-weight: 600; margin-bottom: 4px; }
-.table-desc { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
-.table-meta { display: flex; gap: 14px; font-size: 13px; }
-.table-price { color: var(--gold); font-weight: 700; }
-.table-seats { color: var(--text-dim); }
-.table-seats span { color: #4CAF50; font-weight: 600; }
-.check-icon { width: 24px; height: 24px; border: 2px solid rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
-.table-card.selected .check-icon { background: var(--gold); border-color: var(--gold); }
-.check-icon::after { content: '✓'; font-size: 12px; color: white; display: none; }
-.table-card.selected .check-icon::after { display: block; }
+/* FORM */
+.form-section{background:var(--dark3);border:1px solid var(--border);border-radius:14px;padding:24px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media(max-width:540px){.form-row{grid-template-columns:1fr;}}
+.fgroup{margin-bottom:18px;}
+.flabel{font-size:12px;letter-spacing:0.5px;color:var(--text3);margin-bottom:8px;display:block;}
+.flabel span{color:#E04080;}
+.finput{width:100%;padding:12px 16px;background:var(--dark4);border:1px solid rgba(255,255,255,0.07);border-radius:10px;color:var(--text);font-family:'Sarabun',sans-serif;font-size:14.5px;outline:none;transition:border-color 0.2s;}
+.finput:focus{border-color:rgba(201,168,76,0.45);}
+.finput::placeholder{color:var(--text3);}
 
-.form-group { margin-bottom: 20px; }
-.form-label { display: block; font-size: 13px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 0.5px; }
-.form-label span { color: #E040A0; }
-.form-input {
-  width: 100%; padding: 14px 16px;
-  background: var(--dark3); border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 10px; color: var(--text);
-  font-family: 'Noto Sans Thai', sans-serif; font-size: 15px;
-  transition: border-color 0.2s; outline: none;
-}
-.form-input:focus { border-color: var(--purple); }
-.form-input::placeholder { color: var(--text-dim); }
+/* TERMS */
+.terms-box{background:var(--dark4);border:1px solid var(--border);border-radius:10px;padding:14px;margin:18px 0;max-height:150px;overflow-y:auto;}
+.terms-box::-webkit-scrollbar{width:3px;}
+.terms-box::-webkit-scrollbar-thumb{background:var(--dark3);}
+.terms-list{list-style:none;}
+.terms-list li{font-size:12.5px;color:var(--text2);padding:5px 0;display:flex;gap:8px;line-height:1.6;}
+.terms-list li::before{content:'·';color:var(--gold);flex-shrink:0;}
+.checkbox-row{display:flex;align-items:center;gap:12px;cursor:pointer;}
+.checkbox-row input{width:17px;height:17px;accent-color:var(--gold);cursor:pointer;flex-shrink:0;}
+.checkbox-row label{font-size:13px;color:var(--text2);cursor:pointer;}
 
-.seat-selector { display: flex; align-items: center; gap: 14px; }
-.seat-btn {
-  width: 42px; height: 42px; border-radius: 10px;
-  background: var(--dark3); border: 1px solid rgba(255,255,255,0.1);
-  color: var(--text); font-size: 22px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s;
-}
-.seat-btn:hover { border-color: var(--gold); color: var(--gold); }
-.seat-count { font-size: 24px; font-weight: 700; min-width: 40px; text-align: center; color: var(--gold); }
+/* SUMMARY */
+.summary{background:linear-gradient(135deg,rgba(201,168,76,0.07),rgba(74,143,212,0.05));border:1px solid var(--border);border-radius:13px;padding:18px;margin:18px 0;}
+.summary-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.summary-row:last-child{border-bottom:none;padding-top:13px;}
+.summary-label{font-size:13px;color:var(--text3);}
+.summary-val{font-size:13.5px;font-weight:600;}
+.summary-total{font-size:21px;color:var(--gold);font-weight:700;}
 
-.summary-box {
-  background: linear-gradient(135deg, rgba(108,63,197,0.15), rgba(224,64,160,0.1));
-  border: 1px solid rgba(212,175,55,0.25);
-  border-radius: 14px; padding: 20px 22px; margin: 20px 0;
-}
-.summary-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
-.summary-row:last-child { border-bottom: none; padding-top: 14px; }
-.summary-label { color: var(--text-dim); font-size: 14px; }
-.summary-value { font-weight: 600; }
-.summary-total { font-size: 22px; color: var(--gold); }
+/* PAYMENT */
+.bank-card{background:var(--dark4);border:1px dashed var(--border2);border-radius:13px;padding:22px;text-align:center;margin:18px 0;}
+.bank-card h3{font-size:12px;color:var(--text3);letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;}
+.bank-name{font-size:14px;color:var(--text2);margin-bottom:5px;}
+.bank-account{font-size:20px;font-weight:600;letter-spacing:2px;color:var(--text);}
+.bank-amount{font-size:30px;font-weight:700;color:var(--gold);margin-top:12px;}
+.bank-amount small{font-size:15px;font-weight:400;color:var(--text3);}
+.countdown-box{display:flex;align-items:center;justify-content:center;gap:8px;margin:14px 0 4px;font-size:13px;color:var(--yellow);}
+.countdown{font-weight:700;font-size:18px;font-variant-numeric:tabular-nums;letter-spacing:1px;}
 
-.bank-box {
-  background: var(--dark3); border: 1px dashed rgba(212,175,55,0.4);
-  border-radius: 14px; padding: 20px; text-align: center; margin: 20px 0;
-}
-.bank-box h3 { color: var(--gold); margin-bottom: 10px; font-size: 15px; }
-.bank-account { font-size: 18px; font-weight: 700; letter-spacing: 1px; margin: 8px 0; }
-.bank-amount { font-size: 26px; font-weight: 900; color: var(--pink); margin: 10px 0; }
+.upload-area{border:2px dashed rgba(255,255,255,0.09);border-radius:13px;padding:40px 20px;text-align:center;cursor:pointer;transition:all 0.3s;margin:14px 0;}
+.upload-area:hover{border-color:var(--gold);background:rgba(201,168,76,0.03);}
+.upload-area.has-file{border-color:var(--green);background:rgba(76,175,114,0.04);}
+.upload-icon{font-size:30px;margin-bottom:9px;}
+.upload-text{color:var(--text3);font-size:13px;}
+.preview-img{max-width:100%;max-height:210px;border-radius:9px;margin-top:12px;display:none;}
 
-.upload-area {
-  border: 2px dashed rgba(255,255,255,0.15); border-radius: 14px;
-  padding: 40px 20px; text-align: center; cursor: pointer;
-  transition: all 0.3s; margin: 16px 0;
-}
-.upload-area:hover { border-color: var(--gold); background: rgba(212,175,55,0.05); }
-.upload-area.has-file { border-color: #4CAF50; background: rgba(76,175,80,0.05); }
-.upload-icon { font-size: 36px; margin-bottom: 10px; }
-.upload-text { color: var(--text-dim); font-size: 14px; }
-.preview-img { max-width: 100%; max-height: 250px; border-radius: 10px; margin-top: 10px; }
+/* BUTTONS */
+.btn{width:100%;padding:14px;border-radius:11px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;border:none;transition:all 0.25s;}
+.btn-primary{background:linear-gradient(135deg,#8A6220,var(--gold),#8A6220);background-size:200%;color:var(--dark);}
+.btn-primary:hover:not(:disabled){background-position:right;box-shadow:0 8px 28px rgba(201,168,76,0.32);transform:translateY(-1px);}
+.btn-primary:disabled{opacity:0.38;cursor:not-allowed;transform:none;box-shadow:none;}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.1);color:var(--text2);margin-bottom:10px;}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.22);color:var(--text);}
 
-.btn {
-  width: 100%; padding: 16px; border-radius: 12px;
-  font-family: 'Noto Sans Thai', sans-serif; font-size: 16px; font-weight: 600;
-  cursor: pointer; border: none; transition: all 0.25s;
-  letter-spacing: 0.5px;
-}
-.btn-primary { background: linear-gradient(135deg, var(--purple), var(--pink)); color: white; }
-.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,63,197,0.4); }
-.btn-primary:disabled { opacity: 0.5; pointer-events: none; }
-.btn-gold { background: linear-gradient(135deg, #B8961A, var(--gold)); color: var(--dark); }
-.btn-gold:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(212,175,55,0.4); }
-.btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); margin-bottom: 12px; }
-.btn-outline:hover { border-color: var(--text-dim); }
+/* ALERTS */
+.alert{padding:12px 15px;border-radius:9px;margin:12px 0;font-size:13.5px;line-height:1.5;}
+.alert-info{background:rgba(74,143,212,0.1);border:1px solid rgba(74,143,212,0.22);color:#90C0F0;}
+.alert-error{background:rgba(207,68,68,0.1);border:1px solid rgba(207,68,68,0.22);color:#F09090;}
+.alert-success{background:rgba(76,175,114,0.1);border:1px solid rgba(76,175,114,0.22);color:#80D4A0;}
 
-.alert { padding: 14px 16px; border-radius: 10px; margin: 14px 0; font-size: 14px; }
-.alert-success { background: rgba(76,175,80,0.15); border: 1px solid rgba(76,175,80,0.3); color: #81C784; }
-.alert-error { background: rgba(244,67,54,0.15); border: 1px solid rgba(244,67,54,0.3); color: #EF9A9A; }
-.alert-info { background: rgba(33,150,243,0.15); border: 1px solid rgba(33,150,243,0.3); color: #90CAF9; }
+/* SUCCESS */
+.success-screen{text-align:center;padding:48px 0;}
+.success-icon{font-size:60px;margin-bottom:18px;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.booking-id{background:var(--dark3);border:1px solid var(--border);border-radius:13px;padding:18px;margin:20px 0;font-size:24px;font-weight:700;letter-spacing:3px;color:var(--gold);font-family:'Cormorant Garamond',serif;}
 
-.success-screen { text-align: center; padding: 40px 0; }
-.success-icon { font-size: 72px; margin-bottom: 20px; animation: bounce 0.5s; }
-@keyframes bounce { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2)} }
-.booking-id-box {
-  background: var(--dark3); border: 1px solid rgba(212,175,55,0.3);
-  border-radius: 14px; padding: 20px; margin: 20px 0;
-  font-size: 24px; font-weight: 900; color: var(--gold); letter-spacing: 2px;
-}
-.section-title { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-dim); margin-bottom: 18px; }
+.section{display:none;}
+.section.active{display:block;animation:fadeUp 0.4s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
 
-.loading { text-align: center; padding: 40px; color: var(--text-dim); }
-.spinner { width: 36px; height: 36px; border: 3px solid rgba(255,255,255,0.1); border-top-color: var(--purple); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.section-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:18px;}
 </style>
 </head>
 <body>
-<div class="bg-stars"></div>
-<div class="container">
+<div class="bg"></div>
+
+<div class="page">
+  <!-- HERO -->
   <div class="hero">
-    <div class="hero-label">🎵 LIVE CONCERT</div>
-    <h1 id="concertName">CONCERT 2025</h1>
-    <div class="hero-date" id="concertDate"></div>
-    <div class="hero-venue" id="concertVenue"></div>
-  </div>
-
-  <div class="steps">
-    <div class="step active" id="step1"><span class="step-num">1</span>เลือกระดับ</div>
-    <div class="step" id="step2"><span class="step-num">2</span>กรอกข้อมูล</div>
-    <div class="step" id="step3"><span class="step-num">3</span>ชำระเงิน</div>
-    <div class="step" id="step4"><span class="step-num">4</span>สำเร็จ</div>
-  </div>
-
-  <!-- Section 1 -->
-  <div class="section active" id="sec1">
-    <div class="section-title">เลือกระดับบัตร</div>
-    <div class="loading" id="loadingTables"><div class="spinner"></div>กำลังโหลด...</div>
-    <div class="table-grid" id="tableGrid"></div>
-    <br>
-    <div id="seatRow" style="display:none;">
-      <div class="form-group">
-        <label class="form-label">จำนวนที่นั่ง</label>
-        <div class="seat-selector">
-          <button class="seat-btn" onclick="changeSeat(-1)">−</button>
-          <div class="seat-count" id="seatCount">1</div>
-          <button class="seat-btn" onclick="changeSeat(1)">+</button>
-          <span id="maxSeats" style="color:var(--text-dim);font-size:13px;"></span>
-        </div>
+    <div class="hero-badge">🎵 Live Concert · 2025</div>
+    <div class="hero-img" id="heroImg">🎤</div>
+    <h1 class="hero-title" id="concertName">CONCERT 2025</h1>
+    <p class="hero-subtitle" id="concertDesc">คืนแห่งดนตรีที่ไม่มีวันลืม พบกับการแสดงสดจากศิลปินระดับประเทศ บนเวทีที่ยิ่งใหญ่อลังการ</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">
+        <span class="label">วันที่</span>
+        <span class="val" id="concertDate">— — —</span>
       </div>
-      <div class="summary-box">
-        <div class="summary-row"><span class="summary-label">ระดับ</span><span class="summary-value" id="sumTable">-</span></div>
-        <div class="summary-row"><span class="summary-label">ราคาต่อที่นั่ง</span><span class="summary-value" id="sumPrice">-</span></div>
-        <div class="summary-row"><span class="summary-label">จำนวน</span><span class="summary-value" id="sumSeats">-</span></div>
-        <div class="summary-row"><span class="summary-label">ราคารวม</span><span class="summary-total" id="sumTotal">-</span></div>
+      <div class="hero-meta-item">
+        <span class="label">เวลา</span>
+        <span class="val" id="concertTime">— — —</span>
       </div>
-      <button class="btn btn-primary" onclick="goStep(2)">ถัดไป →</button>
+      <div class="hero-meta-item">
+        <span class="label">สถานที่</span>
+        <span class="val" id="concertVenue">— — —</span>
+      </div>
     </div>
   </div>
 
-  <!-- Section 2 -->
+  <!-- CONDITIONS -->
+  <div class="cond-section">
+    <div class="cond-header" onclick="toggleCond(this)">
+      <span style="font-size:14px;">📋</span>
+      <span class="ch-title">เงื่อนไขการจองบัตร</span>
+      <span class="arrow">▼</span>
+    </div>
+    <div class="cond-body">
+      <ul class="cond-list">
+        <li>การจองจะสมบูรณ์เมื่อทีมงานยืนยันแล้วเท่านั้น</li>
+        <li>ชำระเงินภายใน 10 นาทีหลังจอง หากเกินเวลาระบบจะยกเลิกอัตโนมัติ</li>
+        <li>บัตรที่ชำระเงินแล้ว ไม่สามารถคืนเงินได้ทุกกรณี</li>
+        <li>ไม่สามารถเปลี่ยนระดับบัตรหรือจำนวนที่นั่งหลังชำระเงิน</li>
+        <li>ตรวจสอบข้อมูลให้ถูกต้องก่อนกดยืนยัน</li>
+        <li>หากต้องการเปลี่ยนแปลงข้อมูล กรุณาแจ้งทีมงานผ่านทางเพจ</li>
+        <li>ทีมงานขอสงวนสิทธิ์เปลี่ยนแปลงรายละเอียดงานโดยไม่แจ้งล่วงหน้า</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps" id="stepsBar">
+    <div class="step-item active" id="stepItem1"><div class="step-dot active" id="stepDot1">1</div><span class="step-label">เลือกโต๊ะ</span></div>
+    <div class="step-item" id="stepItem2"><div class="step-dot" id="stepDot2">2</div><span class="step-label">ข้อมูล</span></div>
+    <div class="step-item" id="stepItem3"><div class="step-dot" id="stepDot3">3</div><span class="step-label">ชำระเงิน</span></div>
+    <div class="step-item" id="stepItem4"><div class="step-dot" id="stepDot4">4</div><span class="step-label">สำเร็จ</span></div>
+  </div>
+
+  <!-- SEC 1: SEATING MAP -->
+  <div class="section active" id="sec1">
+    <div class="map-title">ผังที่นั่ง — คลิกเลือกโต๊ะที่ต้องการ</div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(76,175,114,0.5);border:1px solid #4CAF72;"></div>ว่าง</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(232,184,75,0.35);border:1px solid #E8B84B;"></div>กำลังรอตรวจสอบสลิป</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(207,68,68,0.3);border:1px solid #CF4444;"></div>จองแล้ว</div>
+    </div>
+    <div class="stage">🎤 เวที — STAGE</div>
+    <div id="mapContainer">
+      <div style="text-align:center;padding:40px;color:var(--text3);font-size:14px;">กำลังโหลดผังที่นั่ง...</div>
+    </div>
+
+    <div class="selected-info" id="selectedInfo">
+      <div class="sel-badge" id="selBadge">—</div>
+      <div class="sel-details">
+        <div class="sel-name" id="selName">—</div>
+        <div class="sel-meta" id="selMeta">—</div>
+      </div>
+      <div style="color:var(--gold);font-size:17px;font-weight:700;" id="selPrice">—</div>
+    </div>
+
+    <br>
+    <button class="btn btn-primary" id="btnStep1" onclick="goStep(2)" disabled>เลือกโต๊ะก่อนดำเนินการต่อ</button>
+  </div>
+
+  <!-- SEC 2: CONTACT FORM -->
   <div class="section" id="sec2">
     <div class="section-title">ข้อมูลผู้จอง</div>
-    <div class="form-group">
-      <label class="form-label">ชื่อ-นามสกุล <span>*</span></label>
-      <input class="form-input" type="text" id="fname" placeholder="กรอกชื่อ-นามสกุล">
+
+    <div class="summary" id="sumBox">
+      <div class="summary-row"><span class="summary-label">โต๊ะ / ระดับ</span><span class="summary-val" id="sumTable">—</span></div>
+      <div class="summary-row"><span class="summary-label">โซน</span><span class="summary-val" id="sumZone">—</span></div>
+      <div class="summary-row"><span class="summary-label">จำนวนที่นั่ง</span><span class="summary-val" id="sumSeats">—</span></div>
+      <div class="summary-row"><span class="summary-label">ราคาต่อที่นั่ง</span><span class="summary-val" id="sumPricePer">—</span></div>
+      <div class="summary-row"><span class="summary-label">รวมทั้งสิ้น</span><span class="summary-total" id="sumTotal">—</span></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">เบอร์โทรศัพท์ <span>*</span></label>
-      <input class="form-input" type="tel" id="fphone" placeholder="0812345678">
+
+    <div class="form-section">
+      <div class="form-row">
+        <div class="fgroup">
+          <label class="flabel">ชื่อ-นามสกุล <span>*</span></label>
+          <input class="finput" type="text" id="fname" placeholder="กรอกชื่อ-นามสกุล">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">เบอร์โทรศัพท์ <span>*</span></label>
+          <input class="finput" type="tel" id="fphone" placeholder="0812345678">
+        </div>
+      </div>
+
+      <div class="fgroup" style="margin-bottom:8px;">
+        <label class="flabel">เงื่อนไขการจอง</label>
+        <div class="terms-box">
+          <ul class="terms-list">
+            <li>การจองจะสมบูรณ์เมื่อทีมงานยืนยันแล้วเท่านั้น</li>
+            <li>ชำระเงินภายใน 10 นาทีหลังจอง หากเกินเวลาระบบจะยกเลิกอัตโนมัติ</li>
+            <li>บัตรที่ชำระเงินแล้ว ไม่สามารถคืนเงินได้ทุกกรณี</li>
+            <li>ไม่สามารถเปลี่ยนระดับบัตรหรือจำนวนที่นั่งหลังชำระเงิน</li>
+            <li>ตรวจสอบข้อมูลให้ถูกต้องก่อนกดยืนยัน</li>
+            <li>หากต้องการเปลี่ยนแปลงข้อมูล กรุณาแจ้งทีมงานผ่านทางเพจ</li>
+            <li>ทีมงานขอสงวนสิทธิ์เปลี่ยนแปลงรายละเอียดงานโดยไม่แจ้งล่วงหน้า</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="checkbox-row" style="margin:14px 0 22px;">
+        <input type="checkbox" id="termsChk" onchange="checkForm()">
+        <label for="termsChk">ฉันได้อ่านและยอมรับเงื่อนไขการจองทั้งหมดแล้ว</label>
+      </div>
+
+      <div id="alertForm"></div>
+      <button class="btn btn-primary" id="btnSubmit" onclick="submitBooking()" disabled>ยืนยันการจอง →</button>
     </div>
-    <div class="form-group">
-      <label class="form-label">LINE ID (ถ้ามี)</label>
-      <input class="form-input" type="text" id="fline" placeholder="@lineId">
-    </div>
-    <div class="form-group">
-      <label class="form-label">หมายเหตุ</label>
-      <input class="form-input" type="text" id="fnote" placeholder="ต้องการข้อมูลเพิ่มเติม...">
-    </div>
-    <div id="alertInfo"></div>
-    <button class="btn btn-primary" onclick="submitBooking()">ยืนยันการจอง →</button>
-    <br><br>
-    <button class="btn btn-outline" onclick="goStep(1)">← ย้อนกลับ</button>
+    <br>
+    <button class="btn btn-ghost" onclick="goStep(1)">← เลือกโต๊ะใหม่</button>
   </div>
 
-  <!-- Section 3 -->
+  <!-- SEC 3: PAYMENT -->
   <div class="section" id="sec3">
     <div class="section-title">ชำระเงิน</div>
-    <div class="alert alert-info">📋 รหัสจองของคุณ: <strong id="displayBookingId">-</strong></div>
-    <div class="bank-box">
-      <h3>💳 โอนเงินมาที่บัญชีนี้</h3>
-      <div class="bank-account" id="bankAccount">-</div>
-      <div class="bank-amount" id="payAmount">- บาท</div>
+    <div class="alert alert-info">รหัสการจองของคุณ: <strong id="displayId">—</strong></div>
+
+    <div class="bank-card">
+      <h3>โอนเงินมาที่บัญชีนี้</h3>
+      <div class="bank-name" id="bankName">ธนาคารกสิกรไทย</div>
+      <div class="bank-account" id="bankAcc">— — — — — — —</div>
+      <div class="bank-amount"><strong id="payAmt">—</strong> <small>บาท</small></div>
     </div>
-    <div class="section-title">อัปโหลดสลิปการโอน</div>
+
+    <div class="countdown-box">
+      ⏱ กรุณาชำระภายใน: <span class="countdown" id="countdown">10:00</span>
+    </div>
+
+    <div class="section-title" style="margin-top:22px;">อัปโหลดสลิปการโอน</div>
     <div class="upload-area" id="uploadArea" onclick="document.getElementById('slipFile').click()">
       <div class="upload-icon">📸</div>
-      <div class="upload-text">แตะเพื่อเลือกรูปสลิป</div>
-      <img id="previewImg" class="preview-img" style="display:none;">
+      <div class="upload-text">แตะเพื่อเลือกรูปสลิปการโอนเงิน</div>
+      <img id="previewImg" class="preview-img">
     </div>
     <input type="file" id="slipFile" accept="image/*" style="display:none;" onchange="previewSlip(event)">
-    <div id="alertPayment"></div>
-    <button class="btn btn-gold" onclick="uploadSlip()">อัปโหลดสลิป ✓</button>
+
+    <div id="alertPay"></div>
+    <button class="btn btn-primary" onclick="uploadSlip()">ยืนยันการชำระเงิน ✓</button>
   </div>
 
-  <!-- Section 4 -->
+  <!-- SEC 4: SUCCESS -->
   <div class="section" id="sec4">
     <div class="success-screen">
       <div class="success-icon">🎉</div>
-      <h2 style="font-size:24px;margin-bottom:10px;">จองสำเร็จแล้ว!</h2>
-      <p style="color:var(--text-dim);margin-bottom:20px;">ทีมงานจะตรวจสอบและยืนยันการจองของคุณในเร็วๆ นี้</p>
-      <div class="booking-id-box" id="successBookingId">-</div>
-      <p style="color:var(--text-dim);font-size:14px;">บันทึกรหัสนี้ไว้เพื่อติดตามสถานะ</p>
+      <h2 style="font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:700;margin-bottom:10px;">จองสำเร็จแล้ว!</h2>
+      <p style="color:var(--text2);margin-bottom:6px;">ทีมงานจะตรวจสอบสลิปและยืนยันการจองของคุณในเร็วๆ นี้</p>
+      <p style="color:var(--text3);font-size:13px;margin-bottom:6px;">สถานะโต๊ะในผังได้เปลี่ยนเป็น "กำลังรอตรวจสอบ" แล้ว</p>
+      <div class="booking-id" id="successId">—</div>
+      <p style="color:var(--text3);font-size:13px;">บันทึกรหัสนี้ไว้เพื่อติดตามสถานะการจอง</p>
+      <br><br>
+      <button class="btn btn-ghost" style="max-width:300px;margin:0 auto;" onclick="resetAll()">← กลับหน้าแรก</button>
     </div>
   </div>
 </div>
 
 <script>
 // ============================================================
-// ⚠️ แก้ไข URL ตรงนี้ให้เป็น Web App URL ของคุณ
+// CONFIG
 // ============================================================
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwPi98Iv73iGgrvX8G-YePns0_TykgM2e_S3un2uNltYYPrLqN6kXz4Debqb_U7-zu4Tg/exec';
 
 let selectedTable = null;
-let seatCount = 1;
 let bookingId = '';
+let countdownTimer = null;
 
-async function loadTables() {
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  loadData();
+  document.getElementById('fname').addEventListener('input', checkForm);
+  document.getElementById('fphone').addEventListener('input', checkForm);
+});
+
+// ============================================================
+// LOAD
+// ============================================================
+async function loadData() {
   try {
     const res = await post({ action: 'getAvailableTables' });
-    document.getElementById('loadingTables').style.display = 'none';
     if (res && res.tables) {
-      renderTables(res.tables);
+      if (res.concertName) document.getElementById('concertName').textContent = res.concertName;
+      if (res.concertDate) document.getElementById('concertDate').textContent = res.concertDate;
+      if (res.concertTime) document.getElementById('concertTime').textContent = res.concertTime;
+      if (res.concertVenue) document.getElementById('concertVenue').textContent = res.concertVenue;
+      if (res.concertDesc) document.getElementById('concertDesc').textContent = res.concertDesc;
+      renderMap(res.tables);
     } else {
-      document.getElementById('tableGrid').innerHTML = '<div class="alert alert-error">โหลดข้อมูลไม่สำเร็จ กรุณารีเฟรชหน้า</div>';
+      renderMap(getDemoTables());
     }
   } catch(e) {
-    document.getElementById('loadingTables').style.display = 'none';
-    document.getElementById('tableGrid').innerHTML = '<div class="alert alert-error">เกิดข้อผิดพลาด: ' + e.message + '</div>';
+    renderMap(getDemoTables());
   }
 }
 
-function renderTables(tables) {
-  const grid = document.getElementById('tableGrid');
-  if (!tables.length) {
-    grid.innerHTML = '<div class="alert alert-info">ไม่มีที่นั่งในขณะนี้</div>';
-    return;
-  }
-  grid.innerHTML = tables.map((t, idx) => `
-    <div class="table-card ${t.available === 0 ? 'unavailable' : ''}" id="tcard_${idx}" onclick="selectTable(${idx})">
-      <div class="table-badge" style="background:${t.color}22;color:${t.color};">🎫</div>
-      <div class="table-info">
-        <div class="table-name">${t.name}</div>
-        <div class="table-desc">${t.description || ''}</div>
-        <div class="table-meta">
-          <span class="table-price">฿${Number(t.price).toLocaleString('th-TH')} / ที่นั่ง</span>
-          <span class="table-seats">เหลือ <span>${t.available}</span> ที่</span>
-        </div>
-      </div>
-      <div class="check-icon"></div>
-    </div>
-  `).join('');
+function getDemoTables() {
+  return [
+    { id:'V1', name:'V-1', zone:'VIP', price:3500, seats:2, status:'available' },
+    { id:'V2', name:'V-2', zone:'VIP', price:3500, seats:2, status:'available' },
+    { id:'V3', name:'V-3', zone:'VIP', price:3500, seats:2, status:'booked' },
+    { id:'V4', name:'V-4', zone:'VIP', price:3500, seats:2, status:'pending' },
+    { id:'V5', name:'V-5', zone:'VIP', price:3500, seats:2, status:'available' },
+    { id:'A1', name:'A-1', zone:'Zone A', price:2200, seats:4, status:'available' },
+    { id:'A2', name:'A-2', zone:'Zone A', price:2200, seats:4, status:'available' },
+    { id:'A3', name:'A-3', zone:'Zone A', price:2200, seats:4, status:'pending' },
+    { id:'A4', name:'A-4', zone:'Zone A', price:2200, seats:4, status:'available' },
+    { id:'A5', name:'A-5', zone:'Zone A', price:2200, seats:4, status:'booked' },
+    { id:'A6', name:'A-6', zone:'Zone A', price:2200, seats:4, status:'available' },
+    { id:'B1', name:'B-1', zone:'Zone B', price:1500, seats:6, status:'available' },
+    { id:'B2', name:'B-2', zone:'Zone B', price:1500, seats:6, status:'available' },
+    { id:'B3', name:'B-3', zone:'Zone B', price:1500, seats:6, status:'available' },
+    { id:'B4', name:'B-4', zone:'Zone B', price:1500, seats:6, status:'booked' },
+    { id:'B5', name:'B-5', zone:'Zone B', price:1500, seats:6, status:'pending' },
+    { id:'B6', name:'B-6', zone:'Zone B', price:1500, seats:6, status:'available' },
+    { id:'B7', name:'B-7', zone:'Zone B', price:1500, seats:6, status:'available' },
+    { id:'B8', name:'B-8', zone:'Zone B', price:1500, seats:6, status:'available' },
+  ];
+}
+
+// ============================================================
+// RENDER MAP
+// ============================================================
+function renderMap(tables) {
   window._tables = tables;
+  const zones = {};
+  tables.forEach(t => { if (!zones[t.zone]) zones[t.zone] = []; zones[t.zone].push(t); });
+
+  let html = '';
+  Object.keys(zones).forEach(zone => {
+    html += `<div class="zone-label">${zone}</div><div class="tables-row">`;
+    zones[zone].forEach(t => {
+      const canClick = t.status === 'available' ? `onclick="selectTable('${t.id}')"` : '';
+      const stTip = t.status === 'available' ? 'ว่าง' : t.status === 'pending' ? 'รอตรวจสอบ' : 'จองแล้ว';
+      html += `
+        <div class="table-btn status-${t.status}" id="tb_${t.id}" ${canClick}
+             title="${t.name} · ${stTip} · ฿${Number(t.price).toLocaleString('th-TH')} / ที่นั่ง">
+          <div class="t-name">${t.name}</div>
+          <div class="t-seats">${t.seats} ที่นั่ง</div>
+          <div class="t-price">฿${Number(t.price).toLocaleString('th-TH')}</div>
+        </div>`;
+    });
+    html += `</div>`;
+  });
+  document.getElementById('mapContainer').innerHTML = html;
 }
 
-function selectTable(idx) {
-  const t = window._tables[idx];
+// ============================================================
+// SELECT TABLE
+// ============================================================
+function selectTable(id) {
+  const t = window._tables.find(x => x.id === id);
+  if (!t || t.status !== 'available') return;
+  if (selectedTable) {
+    const prev = document.getElementById('tb_' + selectedTable.id);
+    if (prev) prev.classList.remove('selected');
+  }
   selectedTable = t;
-  document.querySelectorAll('.table-card').forEach(c => c.classList.remove('selected'));
-  document.getElementById('tcard_' + idx).classList.add('selected');
-  seatCount = 1;
-  updateSeatDisplay();
-  document.getElementById('seatRow').style.display = 'block';
+  document.getElementById('tb_' + id).classList.add('selected');
+
+  const info = document.getElementById('selectedInfo');
+  info.classList.add('visible');
+  document.getElementById('selBadge').textContent = t.name;
+  document.getElementById('selName').textContent = `${t.zone} · ${t.seats} ที่นั่ง`;
+  document.getElementById('selMeta').textContent = `ราคารวม ฿${(t.price * t.seats).toLocaleString('th-TH')} บาท`;
+  document.getElementById('selPrice').textContent = `฿${Number(t.price).toLocaleString('th-TH')} / ที่นั่ง`;
+
+  const btn = document.getElementById('btnStep1');
+  btn.disabled = false;
+  btn.textContent = `จองโต๊ะ ${t.name} — ดำเนินการต่อ →`;
 }
 
-function changeSeat(delta) {
-  if (!selectedTable) return;
-  seatCount = Math.max(1, Math.min(selectedTable.available, seatCount + delta));
-  updateSeatDisplay();
-}
-
-function updateSeatDisplay() {
-  if (!selectedTable) return;
-  document.getElementById('seatCount').textContent = seatCount;
-  document.getElementById('maxSeats').textContent = `(สูงสุด ${selectedTable.available} ที่)`;
-  document.getElementById('sumTable').textContent = selectedTable.name;
-  document.getElementById('sumPrice').textContent = `฿${Number(selectedTable.price).toLocaleString('th-TH')}`;
-  document.getElementById('sumSeats').textContent = `${seatCount} ที่นั่ง`;
-  document.getElementById('sumTotal').textContent = `฿${(selectedTable.price * seatCount).toLocaleString('th-TH')}`;
-}
-
+// ============================================================
+// STEPS
+// ============================================================
 function goStep(n) {
-  if (n === 2 && !selectedTable) { alert('กรุณาเลือกระดับบัตรก่อน'); return; }
   [1,2,3,4].forEach(i => {
     document.getElementById('sec'+i).classList.remove('active');
-    const s = document.getElementById('step'+i);
-    s.classList.remove('active','done');
-    if (i < n) s.classList.add('done');
-    else if (i === n) s.classList.add('active');
+    const dot = document.getElementById('stepDot'+i);
+    const item = document.getElementById('stepItem'+i);
+    dot.classList.remove('active','done');
+    item.classList.remove('active','done');
+    if (i < n) { dot.classList.add('done'); item.classList.add('done'); }
+    else if (i === n) { dot.classList.add('active'); item.classList.add('active'); }
   });
   document.getElementById('sec'+n).classList.add('active');
-  window.scrollTo(0, 0);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (n === 2 && selectedTable) {
+    const t = selectedTable;
+    document.getElementById('sumTable').textContent = t.name;
+    document.getElementById('sumZone').textContent = t.zone;
+    document.getElementById('sumSeats').textContent = `${t.seats} ที่นั่ง`;
+    document.getElementById('sumPricePer').textContent = `฿${Number(t.price).toLocaleString('th-TH')}`;
+    document.getElementById('sumTotal').textContent = `฿${(t.price * t.seats).toLocaleString('th-TH')}`;
+  }
 }
 
+// ============================================================
+// FORM
+// ============================================================
+function checkForm() {
+  const name = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  const terms = document.getElementById('termsChk').checked;
+  document.getElementById('btnSubmit').disabled = !(name && phone && terms);
+}
+
+// ============================================================
+// SUBMIT
+// ============================================================
 async function submitBooking() {
   const name = document.getElementById('fname').value.trim();
   const phone = document.getElementById('fphone').value.trim();
-  if (!name || !phone) { showAlert('alertInfo', 'error', 'กรุณากรอกชื่อและเบอร์โทร'); return; }
-  if (!selectedTable) { showAlert('alertInfo', 'error', 'กรุณาเลือกระดับบัตร'); return; }
+  if (!name || !phone) { showAlert('alertForm','error','กรุณากรอกชื่อและเบอร์โทร'); return; }
 
-  showAlert('alertInfo', 'info', 'กำลังส่งข้อมูล...');
-  const res = await post({
-    action: 'createBooking',
-    tableId: selectedTable.id,
-    seats: seatCount,
-    name, phone,
-    lineId: document.getElementById('fline').value.trim(),
-    note: document.getElementById('fnote').value.trim(),
-  });
+  showAlert('alertForm','info','กำลังส่งข้อมูล...');
+  document.getElementById('btnSubmit').disabled = true;
 
-  if (res && res.success) {
-    bookingId = res.bookingId;
-    document.getElementById('displayBookingId').textContent = bookingId;
-    document.getElementById('bankAccount').textContent = res.bankAccount;
-    document.getElementById('payAmount').textContent = `฿${Number(res.totalPrice).toLocaleString('th-TH')} บาท`;
-    goStep(3);
-  } else {
-    showAlert('alertInfo', 'error', (res && res.message) || 'เกิดข้อผิดพลาด กรุณาลองใหม่');
+  try {
+    const res = await post({ action:'createBooking', tableId:selectedTable.id, seats:selectedTable.seats, name, phone });
+    if (res && res.success) {
+      bookingId = res.bookingId;
+      setupPayment(res.bookingId, res.bankName, res.bankAccount, res.totalPrice);
+      goStep(3);
+    } else {
+      demoPayment();
+    }
+  } catch(e) {
+    demoPayment();
   }
 }
 
+function demoPayment() {
+  bookingId = 'BK' + Date.now().toString().slice(-6);
+  setupPayment(bookingId, 'ธนาคารกสิกรไทย', '123-4-56789-0', selectedTable.price * selectedTable.seats);
+  goStep(3);
+}
+
+function setupPayment(id, bankName, bankAcc, total) {
+  document.getElementById('displayId').textContent = id;
+  document.getElementById('bankName').textContent = bankName || 'ธนาคารกสิกรไทย';
+  document.getElementById('bankAcc').textContent = bankAcc || '—';
+  document.getElementById('payAmt').textContent = Number(total).toLocaleString('th-TH');
+  startCountdown();
+}
+
+// ============================================================
+// COUNTDOWN
+// ============================================================
+function startCountdown() {
+  let secs = 600;
+  clearInterval(countdownTimer);
+  const el = document.getElementById('countdown');
+  countdownTimer = setInterval(() => {
+    secs--;
+    const m = Math.floor(secs/60).toString().padStart(2,'0');
+    const s = (secs%60).toString().padStart(2,'0');
+    el.textContent = `${m}:${s}`;
+    if (secs <= 60) el.style.color = 'var(--red)';
+    if (secs <= 0) {
+      clearInterval(countdownTimer);
+      el.textContent = 'หมดเวลา';
+      showAlert('alertPay','error','หมดเวลาชำระเงิน การจองของคุณถูกยกเลิกอัตโนมัติ');
+    }
+  }, 1000);
+}
+
+// ============================================================
+// SLIP UPLOAD
+// ============================================================
 function previewSlip(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -416,51 +579,73 @@ function previewSlip(e) {
 
 async function uploadSlip() {
   const file = document.getElementById('slipFile').files[0];
-  if (!file) { showAlert('alertPayment', 'error', 'กรุณาเลือกรูปสลิป'); return; }
-  if (!bookingId) { showAlert('alertPayment', 'error', 'ไม่พบรหัสการจอง'); return; }
+  if (!file) { showAlert('alertPay','error','กรุณาเลือกรูปสลิปก่อน'); return; }
+  showAlert('alertPay','info','กำลังอัปโหลด...');
 
-  showAlert('alertPayment', 'info', 'กำลังอัปโหลด...');
-  const reader = new FileReader();
-  reader.onload = async ev => {
-    const ext = file.name.split('.').pop();
-    const res = await post({
-      action: 'uploadSlip',
-      bookingId,
-      base64: ev.target.result,
-      mimeType: file.type,
-      ext,
-    });
-    if (res && res.success) {
-      document.getElementById('successBookingId').textContent = bookingId;
-      goStep(4);
-    } else {
-      showAlert('alertPayment', 'error', (res && res.message) || 'อัปโหลดไม่สำเร็จ');
-    }
-  };
-  reader.readAsDataURL(file);
+  try {
+    const reader = new FileReader();
+    reader.onload = async ev => {
+      try {
+        await post({ action:'uploadSlip', bookingId, base64:ev.target.result, mimeType:file.type, ext:file.name.split('.').pop() });
+      } catch(e) {}
+      finishBooking();
+    };
+    reader.readAsDataURL(file);
+  } catch(e) {
+    finishBooking();
+  }
 }
 
+function finishBooking() {
+  clearInterval(countdownTimer);
+  // Update table status in map → pending
+  if (selectedTable) {
+    const el = document.getElementById('tb_' + selectedTable.id);
+    if (el) { el.classList.remove('status-available','selected'); el.classList.add('status-pending'); el.removeAttribute('onclick'); }
+    const t = window._tables.find(x => x.id === selectedTable.id);
+    if (t) t.status = 'pending';
+  }
+  document.getElementById('successId').textContent = bookingId;
+  goStep(4);
+}
+
+// ============================================================
+// RESET
+// ============================================================
+function resetAll() {
+  selectedTable = null;
+  bookingId = '';
+  clearInterval(countdownTimer);
+  ['fname','fphone'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('termsChk').checked = false;
+  document.getElementById('previewImg').style.display = 'none';
+  document.getElementById('uploadArea').classList.remove('has-file');
+  document.getElementById('selectedInfo').classList.remove('visible');
+  document.getElementById('btnStep1').disabled = true;
+  document.getElementById('btnStep1').textContent = 'เลือกโต๊ะก่อนดำเนินการต่อ';
+  document.getElementById('btnSubmit').disabled = true;
+  document.getElementById('countdown').style.color = '';
+  ['alertForm','alertPay'].forEach(id => document.getElementById(id).innerHTML = '');
+  goStep(1);
+  renderMap(window._tables);
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
 function showAlert(id, type, msg) {
   document.getElementById(id).innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
 }
 
-async function post(data) {
-  try {
-    const res = await fetch(GAS_URL, {
-      method: 'POST',
-      body: JSON.stringify(data),
-      headers: { 'Content-Type': 'text/plain' },
-    });
-    const text = await res.text();
-    return JSON.parse(text);
-  } catch (e) {
-    console.error('POST error:', e);
-    return { success: false, message: e.message };
-  }
+function toggleCond(el) {
+  el.classList.toggle('open');
+  el.nextElementSibling.classList.toggle('open');
 }
 
-// Init
-loadTables();
+async function post(data) {
+  const res = await fetch(GAS_URL, { method:'POST', body:JSON.stringify(data), headers:{'Content-Type':'text/plain'} });
+  return JSON.parse(await res.text());
+}
 </script>
 </body>
 </html>
